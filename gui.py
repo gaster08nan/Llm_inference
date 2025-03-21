@@ -12,19 +12,18 @@ history =  [
 
 
 def response_message(message, history):
-    breakpoint()
-    history.append({"role":"user", "content": message})
+    # remove media files from the message
+    history.append({"role":"user", "content": message['text']})
     # history.append(ChatMessage(role="user", content=message))
     response = utils.answer_message(model, tokenizer, history)
-    history = history.append({"role":"assistant", "content": response})
+    history.append({"role":"assistant", "content": response})
     # history.append(ChatMessage(role="assistant", content=response))
-    time.sleep(1)
     return response, history
 
 def bot_responser(history):
     output_response = ''
-    if history['-1']['role'] == 'assistant':
-        for character in history['-1']['content']:
+    if history[-1]['role'] == 'assistant':
+        for character in history[-1]['content']:
             output_response += character
             time.sleep(0.3)
             yield output_response
@@ -38,10 +37,11 @@ with gr.Blocks() as demo:
         show_label=False,
         sources=["microphone", "upload"],
     )
-    print(chat_input)
+    clear = gr.Button("Clear")
     chat_msg = chat_input.submit(response_message, [chat_input, chatbot], [chat_input, chatbot])
-    bot_msg = chat_msg.then(bot_responser,  chatbot, chatbot, api_name="bot_response") #yeild the response message
-    bot_msg.then(lambda: gr.MultimodalTextbox(interactive=True), None, [chat_input]) # clear the chat input bar
+    # bot_msg = chat_msg.then(bot_responser,  chatbot, chatbot, api_name="bot_response") #yeild the response message
+    chat_msg.then(lambda: gr.MultimodalTextbox(interactive=True), chat_msg, [chat_input]) # clear the chat input bar
+    clear.click(lambda: None, None, chatbot)
 
-
-demo.launch(share=True)
+if __name__ == "__main__":
+    demo.launch(share=True)

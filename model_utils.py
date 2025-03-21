@@ -31,7 +31,8 @@ def _init_unsloth_model(model_name):
 def process_response(response):
     # think, last_response = response[-1].split('<｜end▁of▁sentence｜>')[0].split('<|im_start|>user\n')[-1].split('<|im_end|>')[-1].split('<|im_start|>assistant')[-1].split('</think>')
     # last_response = response[-1].split('<|eot_id|>')[0].split('[/INST]')[-2].split('<<SYS>>')[0]
-    last_response = response[-1].split('<|begin_of_text|>')[-1].split('<|eot_id|>')[0].split('[/INST]')[-1]
+    last_response = " ".join(response[-1].split('<|begin_of_text|>')[-1].split('<|eot_id|>')[0].split('[/INST]')[1:])
+    last_response = last_response.replace('<[INST]>', '').replace('[/INST]', '')
     return last_response
 
 def answer_message(model, tokenizer, messages):
