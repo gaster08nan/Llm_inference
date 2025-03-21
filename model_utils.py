@@ -33,8 +33,6 @@ def _init_unsloth_model(model_name):
 
 
 def process_response(response):
-    # think, last_response = response[-1].split('<｜end▁of▁sentence｜>')[0].split('<|im_start|>user\n')[-1].split('<|im_end|>')[-1].split('<|im_start|>assistant')[-1].split('</think>')
-    # last_response = response[-1].split('<|eot_id|>')[0].split('[/INST]')[-2].split('<<SYS>>')[0]
     last_response = " ".join(response[-1].split('<|begin_of_text|>')[-1].split(
         '<|eot_id|>')[0].split('[/INST]')[1:])
     last_response = last_response.replace('<[INST]>',
@@ -58,7 +56,6 @@ def answer_message(model, tokenizer, messages):
 
 
 def setup_inference():
-    # unsloth_4bit_models = "unsloth/DeepSeek-R1-Distill-Qwen-7B-unsloth-bnb-4bit"
     unsloth_4bit_models = "unsloth/Llama-3.2-3B-Instruct-unsloth-bnb-4bit"
 
     model, tokenizer = _init_unsloth_model(unsloth_4bit_models)
