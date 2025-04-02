@@ -14,6 +14,7 @@ history = [
         "content": system_prompt
     },
 ]
+history_file = "history.json"
 
 
 def add_message(message, history):
@@ -30,8 +31,19 @@ def response_message(history):
     return history, f"Last answer response time: {ans_time:.3f}s"
 
 
+def save_history(history):
+    utils.save_history(history, history_file)
+
+
+def delete_history():
+    utils.delete_history(history_file)
+    return ""
+
+
 with gr.Blocks() as demo:
+    history = utils.load_history(history_file) or history
     chatbot = gr.Chatbot(
+        value=history,
         type="messages",
         height=800,
         max_height=900,
@@ -45,13 +57,14 @@ with gr.Blocks() as demo:
         show_label=False,
         sources=["microphone", "upload"],
     )
-    clear = gr.Button("Clear")
+    clear = gr.Button("Clear History")
     chat_msg = chat_input.submit(add_message, [chat_input, chatbot],
                                  [chat_input, chatbot])
-    chat_msg.then(response_message,
-                  inputs=chatbot,
-                  outputs=[chatbot, ans_time_output])
-    clear.click(lambda: None, None, chatbot)
+    chat_msg = chat_msg.then(response_message,
+                             inputs=chatbot,
+                             outputs=[chatbot, ans_time_output])
+    chat_msg.then(save_history, chatbot, None)
+    clear.click(delete_history, None, chatbot)
 
 if __name__ == "__main__":
     demo.launch(share=True)

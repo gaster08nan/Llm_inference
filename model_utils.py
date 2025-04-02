@@ -1,4 +1,7 @@
 # pip install -U xformers --index-url https://download.pytorch.org/whl/cu121
+import json
+import os
+
 import torch
 from transformers import TextStreamer
 from unsloth import FastLanguageModel
@@ -22,6 +25,25 @@ SYS_PROMPT = (
 )
 
 
+def save_history(history, file_path="history.json"):
+    # breakpoint()
+    with open(file_path, "w", encoding="utf-8") as file:
+        json.dump(history, file, indent=2, ensure_ascii=False)
+
+
+def load_history(file_path="history.json"):
+    history = None
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8") as file:
+            history = json.load(file)
+    return history
+
+
+def delete_history(file_path="history.json"):
+    with open(file_path, 'w') as f:
+        f.write("")
+
+
 def _init_unsloth_model(model_name):
 
     model, tokenizer = FastLanguageModel.from_pretrained(
@@ -36,8 +58,8 @@ def _init_unsloth_model(model_name):
 def process_response(response):
     last_response = " ".join(response[-1].split('<|begin_of_text|>')[-1].split(
         '<|eot_id|>')[0].split('[/INST]')[1:])
-    last_response = last_response.replace('<[INST]>',
-                                          '').replace('[/INST]', '')
+    last_response = last_response.replace('<[INST]>', '').replace(
+        '[/INST]', '').replace('<<SYS>>', '').replace('<</SYS>>', '')
     return last_response
 
 
