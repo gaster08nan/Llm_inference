@@ -13,6 +13,7 @@ You can create a `.env` file to customize the server port and host:
 ```env
 GRADIO_SERVER_PORT=8080
 GRADIO_SERVER_NAME=0.0.0.0
+```
 
 ---
 
@@ -22,7 +23,7 @@ To build the Docker container from the Dockerfile, run the following command:
 
 ---
 
-## 🧪 Run Docker Container
+## 🐳 Run Docker Container
 To run the Docker container you just built, use this command:
 `docker run --gpus all -p 8080:8080 -it gradio-app`
 
