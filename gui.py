@@ -1,6 +1,8 @@
+import os
 import time
 
 import gradio as gr
+from dotenv import load_dotenv
 from gradio import ChatMessage
 
 import model_utils as utils
@@ -67,4 +69,7 @@ with gr.Blocks() as demo:
     clear.click(delete_history, None, chatbot)
 
 if __name__ == "__main__":
-    demo.launch(share=True)
+    load_dotenv()
+    demo.launch(share=True,
+                server_name=os.getenv("GRADIO_SERVER_NAME", "127.0.0.1"),
+                server_port=int(os.getenv("GRADIO_SERVER_PORT", 7860)))

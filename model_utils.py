@@ -1,11 +1,13 @@
 # pip install -U xformers --index-url https://download.pytorch.org/whl/cu121
+# unsloth should be imported before transformers for optimization
+from unsloth import FastLanguageModel
+from unsloth.chat_templates import get_chat_template
+
 import json
 import os
 
 import torch
 from transformers import TextStreamer
-from unsloth import FastLanguageModel
-from unsloth.chat_templates import get_chat_template
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 SYS_PROMPT = (
@@ -23,8 +25,7 @@ SYS_PROMPT = (
     "- Cite sources when using external information, where possible. "
     "- Use markdown formatting for better readability when appropriate (e.g., lists, tables, headings)."
     "When answering comparative questions, always provide a table with the comparison. "
-    "Always keep the responses refine and precise."
-)
+    "Always keep the responses refine and precise.")
 
 
 def save_history(history, file_path="history.json"):
@@ -88,7 +89,6 @@ def setup_inference():
     tokenizer = get_chat_template(
         tokenizer,
         chat_template="llama",
-        # mapping = {"role" : "from", "content" : "value", "user" : "human", "assistant" : "gpt"}, # ShareGPT style
     )
 
     return model, tokenizer
